@@ -7,6 +7,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import Wishlist from '../pages/Wishlist/Wishlist';
 import SellProduct from '../pages/SellProduct/SellProduct';
 import PublicRoute from '../components/PublicRoute';
+import ProductDetails from '../pages/ProductDetails/ProductDetails';
 const router = createBrowserRouter([
     {
         path:'/',
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
                         element: <Signup/>
                     }
                 ]
+            },
+            {
+                path: '/product/:id',
+                element: <ProductDetails/>
             },
             {
                 element: <ProtectedRoute/>,

@@ -3,7 +3,7 @@ import useAuth from "../hooks/useAuth";
 
 function Navbar(){
 
-    const {user, logout} = useAuth();
+    const {user, logout, loading} = useAuth();
     return (
         <>
             <nav className="navbar">
@@ -12,7 +12,7 @@ function Navbar(){
             <Link to={'/'}>Home</Link>
 
             
-            {user ?
+            {loading ? null : user ?
                 <>
                     <Link to={'/wishlist'}>Wishlist</Link>
                     <button onClick={logout}>Logout</button>

@@ -1,5 +1,83 @@
+import { useEffect, useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import ProductCard from "../../components/ProductCard";
+import { arrayRemove, doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../../services/firebase";
+
 function Wishlist(){
-    return <h1>Wishlist</h1>
+
+    const { user } = useAuth();
+    const [products, setProducts] = useState([]);
+
+    async function handleRemove(productId) {
+        try {
+            await setDoc(
+                doc(db, "users", user.uid),
+                {
+                    wishlist: arrayRemove(productId)
+                },
+                { merge: true }
+            );
+    
+            setProducts(products.filter(product => product.id !== productId));
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        async function fetchWishlist() {
+            try {
+                const userSnapshot = await getDoc(
+                    doc(db, "users", user.uid)
+                );
+    
+                const wishlistIds = userSnapshot.data()?.wishlist || [];
+    
+                const productSnapshots = await Promise.all(
+                    wishlistIds.map((id) =>
+                        getDoc(doc(db, "products", id))
+                    )
+                );
+    
+                const wishlistProducts = productSnapshots
+                    .filter((snapshot) => snapshot.exists())
+                    .map((snapshot) => ({
+                        id: snapshot.id,
+                        ...snapshot.data()
+                    }));
+    
+                setProducts(wishlistProducts);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    
+        if (user) {
+            fetchWishlist();
+        }
+
+    }, [user]);
+
+    return (
+        <div className="wishlist-page">
+            <h1>My Wishlist</h1>
+    
+            <div className="products-grid">
+                {products.map(product => (
+                    <div key={product.id} className="wishlist-item">
+                        <ProductCard product={product} />
+                        <button
+                            className="remove-btn"
+                            onClick={() => handleRemove(product.id)}
+                        >
+                            Remove
+                        </button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
 }
 
 export default Wishlist;
