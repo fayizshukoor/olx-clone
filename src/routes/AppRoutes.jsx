@@ -6,6 +6,7 @@ import Signup from '../pages/Signup/Signup';
 import ProtectedRoute from '../components/ProtectedRoute';
 import Wishlist from '../pages/Wishlist/Wishlist';
 import SellProduct from '../pages/SellProduct/SellProduct';
+import PublicRoute from '../components/PublicRoute';
 const router = createBrowserRouter([
     {
         path:'/',
@@ -16,12 +17,17 @@ const router = createBrowserRouter([
                 element: <Home/>
             },
             {
-                path:'login',
-                element: <Login/>
-            },
-            {
-                path:'signup',
-                element: <Signup/>
+                element: <PublicRoute/>,
+                children: [
+                    {
+                        path:'login',
+                        element: <Login/>
+                    },
+                    {
+                        path:'signup',
+                        element: <Signup/>
+                    }
+                ]
             },
             {
                 element: <ProtectedRoute/>,
