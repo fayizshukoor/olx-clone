@@ -43,7 +43,7 @@ function SellProduct(){
 
 
     return (
-        <>
+        <div className="sell-form">
             <form onSubmit={handleSubmit}>
 
                 {error && <p className="auth-error">{error}</p>}
@@ -53,9 +53,9 @@ function SellProduct(){
                 <input type="text" placeholder="Category" onChange={(e)=> setCategory(e.target.value)} value={category} />
                 <input type="text" placeholder="Location" onChange={(e)=> setLocation(e.target.value)} value={location} />
                 <input type="text" placeholder="Image Url" onChange={(e)=> setImageUrl(e.target.value)} value={imageUrl} />
-                <button type="submit">List</button>
+                <button type="submit">Post Now</button>
             </form>
-        </>
+        </div>
     )
 }
 

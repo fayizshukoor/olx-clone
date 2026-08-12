@@ -8,6 +8,8 @@ import Wishlist from '../pages/Wishlist/Wishlist';
 import SellProduct from '../pages/SellProduct/SellProduct';
 import PublicRoute from '../components/PublicRoute';
 import ProductDetails from '../pages/ProductDetails/ProductDetails';
+import MyAds from '../pages/MyAds/MyAds';
+import EditProduct from '../pages/EditProduct/EditProduct';
 const router = createBrowserRouter([
     {
         path:'/',
@@ -42,9 +44,18 @@ const router = createBrowserRouter([
                         element: <Wishlist/>
                     },
                     {
+                        path: 'my-ads',
+                        element: <MyAds/>
+                    },
+                    {
                         path: 'sell',
                         element: <SellProduct/>
-                    }
+                    },
+                    {
+                        path: 'edit-product/:id',
+                        element: <EditProduct/>
+                    },
+                    
                 ]
             }
         ]

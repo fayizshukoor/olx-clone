@@ -8,12 +8,10 @@ function Navbar(){
         <>
             <nav className="navbar">
             <Link to={'/'} className="logo">OLX</Link>
-
-            <Link to={'/'}>Home</Link>
-
             
             {loading ? null : user ?
                 <>
+                    <Link to={'/my-ads'}>My Ads</Link>
                     <Link to={'/wishlist'}>Wishlist</Link>
                     <button onClick={logout}>Logout</button>
                 </>
