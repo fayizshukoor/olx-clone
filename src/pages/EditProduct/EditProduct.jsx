@@ -3,6 +3,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../services/firebase";
 import Loading from "../../components/Loading";
+import '../SellProduct/SellProduct.css';
 
 function EditProduct() {
     const { id } = useParams();

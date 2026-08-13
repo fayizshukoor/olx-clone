@@ -1,0 +1,28 @@
+/* Sell / Edit product form styles */
+.sell-form {
+  width: 100%;
+  max-width: 650px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.sell-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sell-form input,
+.sell-form textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.sell-form .auth-error {
+  color: #d32f2f;
+  margin-bottom: 8px;
+}

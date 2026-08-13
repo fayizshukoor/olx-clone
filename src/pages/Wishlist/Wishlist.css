@@ -1,0 +1,20 @@
+/* Wishlist page styles */
+.wishlist-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 30px 20px;
+}
+
+.wishlist-item {
+  position: relative;
+}
+
+.remove-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #d32f2f;
+  color: white;
+  cursor: pointer;
+  border-radius: 0 0 5px 5px;
+}

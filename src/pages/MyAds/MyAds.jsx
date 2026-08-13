@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import './MyAds.css';
+import '../Wishlist/Wishlist.css';
 import { collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
@@ -15,21 +17,21 @@ function MyAds() {
 
     useEffect(() => {
         if (!user) return;
-    
+
         async function fetchMyAds() {
             try {
                 const q = query(
                     collection(db, "products"),
                     where("sellerId", "==", user.uid)
                 );
-    
+
                 const snapshot = await getDocs(q);
-    
+
                 const data = snapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data()
                 }));
-    
+
                 setProducts(data);
             } catch (error) {
                 console.error(error);
@@ -37,20 +39,20 @@ function MyAds() {
                 setLoading(false);
             }
         }
-    
+
         fetchMyAds();
     }, [user]);
 
     async function handleDelete() {
         try {
             setDeleting(true);
-    
+
             await deleteDoc(doc(db, "products", deleteId));
-    
+
             setProducts((prev) =>
                 prev.filter((product) => product.id !== deleteId)
             );
-    
+
             setDeleteId(null);
         } catch (error) {
             console.error(error);

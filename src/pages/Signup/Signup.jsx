@@ -1,24 +1,25 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import '../Login/Login.css';
 
-function Signup(){
+function Signup() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
 
-    const {signup} = useAuth();
+    const { signup } = useAuth();
 
     const navigate = useNavigate();
 
-    async function handleSubmit(e){
+    async function handleSubmit(e) {
         e.preventDefault();
         try {
             setError('');
 
-            if(password !== confirmPassword){
+            if (password !== confirmPassword) {
                 setError('Passwords do not match');
                 return;
             }
@@ -29,16 +30,16 @@ function Signup(){
             setError(error.message);
         }
     }
-    
+
     return (
         <>
-            <form onSubmit={handleSubmit}>
+            <form className="auth-form" onSubmit={handleSubmit}>
                 <h1>Create Account</h1>
                 {error && <p >{error}</p>}
 
-                <input type="email" placeholder="Email" value={email} onChange={(e)=> setEmail(e.target.value)} />
-                <input type="password" placeholder="Password" value={password} onChange={(e)=> setPassword(e.target.value)} />
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e)=> setConfirmPassword(e.target.value)} />
+                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                 <button type="submit">Sign Up</button>
 
                 <p>

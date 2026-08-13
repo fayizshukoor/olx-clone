@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../services/firebase";
 import Loading from "../../components/Loading";
 import useAuth from "../../hooks/useAuth";
+import './ProductDetails.css';
 
 function ProductDetails(){
 
@@ -76,17 +77,81 @@ function ProductDetails(){
 
 
     return (
-        <div className="product-details">
-            <img src={product.imageUrl} alt={product.title} />
-            <h1>{product.title}</h1>
-            <h2>₹{product.price}</h2>
-            <p>{product.description}</p>
-            <p>{product.category}</p>
-            <p>{product.location}</p>
-            <p>Seller: {product.sellerEmail}</p>
-            <button onClick={handleWishlist}>{isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}</button>
+        <div className="product-details-page">
+            <div className="product-details">
+    
+                <div className="product-image-section">
+                    <img
+                        src={product.imageUrl}
+                        alt={product.title}
+                    />
+                </div>
+    
+                <div className="product-info-section">
+    
+                    <div className="product-header">
+                        <div>
+                            <h1>{product.title}</h1>
+                            <p className="product-location">
+                                📍 {product.location}
+                            </p>
+                        </div>
+    
+                        <button
+                            className={`wishlist-btn ${isWishlisted ? "wishlisted" : ""}`}
+                            onClick={handleWishlist}
+                        >
+                            {isWishlisted ? "♥" : "♡"}
+                        </button>
+                    </div>
+    
+                    <h2 className="product-price">
+                        ₹{Number(product.price).toLocaleString("en-IN")}
+                    </h2>
+    
+                    <div className="product-divider"></div>
+    
+                    <h3>Description</h3>
+                    <p className="product-description">
+                        {product.description}
+                    </p>
+    
+                    <div className="product-meta">
+                        <div>
+                            <span>Category</span>
+                            <strong>{product.category}</strong>
+                        </div>
+    
+                        <div>
+                            <span>Location</span>
+                            <strong>{product.location}</strong>
+                        </div>
+                    </div>
+    
+                    <div className="seller-box">
+                        <div className="seller-avatar">
+                            {product.sellerEmail?.charAt(0).toUpperCase()}
+                        </div>
+    
+                        <div>
+                            <span>Seller</span>
+                            <strong>{product.sellerEmail}</strong>
+                        </div>
+                    </div>
+    
+                    <button
+                        className={`main-wishlist-btn ${isWishlisted ? "remove" : ""}`}
+                        onClick={handleWishlist}
+                    >
+                        {isWishlisted
+                            ? "Remove from Wishlist"
+                            : "Add to Wishlist"}
+                    </button>
+    
+                </div>
+            </div>
         </div>
-    )
+    )       
 }
 
 export default ProductDetails;

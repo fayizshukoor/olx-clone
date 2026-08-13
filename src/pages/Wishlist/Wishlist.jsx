@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import './Wishlist.css';
 import useAuth from "../../hooks/useAuth";
 import ProductCard from "../../components/ProductCard";
 import { arrayRemove, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../services/firebase";
 
-function Wishlist(){
+function Wishlist() {
 
     const { user } = useAuth();
     const [products, setProducts] = useState([]);
@@ -18,7 +19,7 @@ function Wishlist(){
                 },
                 { merge: true }
             );
-    
+
             setProducts(products.filter(product => product.id !== productId));
         } catch (error) {
             console.error(error);
@@ -31,28 +32,28 @@ function Wishlist(){
                 const userSnapshot = await getDoc(
                     doc(db, "users", user.uid)
                 );
-    
+
                 const wishlistIds = userSnapshot.data()?.wishlist || [];
-    
+
                 const productSnapshots = await Promise.all(
                     wishlistIds.map((id) =>
                         getDoc(doc(db, "products", id))
                     )
                 );
-    
+
                 const wishlistProducts = productSnapshots
                     .filter((snapshot) => snapshot.exists())
                     .map((snapshot) => ({
                         id: snapshot.id,
                         ...snapshot.data()
                     }));
-    
+
                 setProducts(wishlistProducts);
             } catch (error) {
                 console.error(error);
             }
         }
-    
+
         if (user) {
             fetchWishlist();
         }
@@ -62,9 +63,9 @@ function Wishlist(){
     return (
         <div className="wishlist-page">
             <h1>My Wishlist</h1>
-    
+
             <div className="products-grid">
-                {products.map(product => (
+                {products ? products.map(product => (
                     <div key={product.id} className="wishlist-item">
                         <ProductCard product={product} />
                         <button
@@ -74,7 +75,9 @@ function Wishlist(){
                             Remove
                         </button>
                     </div>
-                ))}
+                )) :
+                    <h1>No items in Wishlist</h1>
+                }
             </div>
         </div>
     )
