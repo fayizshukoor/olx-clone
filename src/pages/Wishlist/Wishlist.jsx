@@ -1,42 +1,20 @@
 import { useEffect, useState } from "react";
-import './Wishlist.css';
-import useAuth from "../../hooks/useAuth";
+import "./Wishlist.css";
 import ProductCard from "../../components/ProductCard";
-import { arrayRemove, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../services/firebase";
+import useWishlist from "../../hooks/useWishlist";
 
 function Wishlist() {
+    const { wishlist, removeFromWishlist } = useWishlist();
 
-    const { user } = useAuth();
     const [products, setProducts] = useState([]);
 
-    async function handleRemove(productId) {
-        try {
-            await setDoc(
-                doc(db, "users", user.uid),
-                {
-                    wishlist: arrayRemove(productId)
-                },
-                { merge: true }
-            );
-
-            setProducts(products.filter(product => product.id !== productId));
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     useEffect(() => {
-        async function fetchWishlist() {
+        async function fetchWishlistProducts() {
             try {
-                const userSnapshot = await getDoc(
-                    doc(db, "users", user.uid)
-                );
-
-                const wishlistIds = userSnapshot.data()?.wishlist || [];
-
                 const productSnapshots = await Promise.all(
-                    wishlistIds.map((id) =>
+                    wishlist.map((id) =>
                         getDoc(doc(db, "products", id))
                     )
                 );
@@ -54,11 +32,20 @@ function Wishlist() {
             }
         }
 
-        if (user) {
-            fetchWishlist();
-        }
+        fetchWishlistProducts();
+    }, [wishlist]);
 
-    }, [user]);
+    async function handleRemove(productId) {
+        try {
+            await removeFromWishlist(productId);
+
+            setProducts((prev) =>
+                prev.filter((product) => product.id !== productId)
+            );
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <div className="wishlist-page">
@@ -66,13 +53,18 @@ function Wishlist() {
 
             <div className="products-grid">
                 {products.length > 0 ? (
-                    products.map(product => (
-                        <div key={product.id} className="wishlist-item">
+                    products.map((product) => (
+                        <div
+                            key={product.id}
+                            className="wishlist-item"
+                        >
                             <ProductCard product={product} />
 
                             <button
                                 className="remove-btn"
-                                onClick={() => handleRemove(product.id)}
+                                onClick={() =>
+                                    handleRemove(product.id)
+                                }
                             >
                                 Remove
                             </button>
@@ -82,7 +74,8 @@ function Wishlist() {
                     <div className="empty-wishlist">
                         <h2>Your Wishlist is Empty</h2>
                         <p>
-                            Products you add to your wishlist will appear here.
+                            Products you add to your wishlist will
+                            appear here.
                         </p>
                     </div>
                 )}

@@ -1,42 +1,35 @@
-import { arrayRemove, arrayUnion, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../../services/firebase";
 import Loading from "../../components/Loading";
 import useAuth from "../../hooks/useAuth";
 import './ProductDetails.css';
+import useWishlist from "../../hooks/useWishlist";
 
 function ProductDetails(){
 
     const {id} = useParams();
     const [product, setProduct] = useState(null);
-    const [isWishlisted, setIsWishlisted] = useState(false);
     const {user} = useAuth();
+    const {addToWishlist, removeFromWishlist, isWishlisted} = useWishlist();
     const navigate = useNavigate();
 
     async function handleWishlist() {
-
-        if(!user){
-            navigate('/login');
-            return ;
+        if (!user) {
+            navigate("/login");
+            return;
         }
-
+    
         try {
-            await setDoc(doc(db, 'users', user.uid),
-                {
-                    wishlist: isWishlisted
-                    ? arrayRemove(product.id)
-                    : arrayUnion(product.id)
-                },
-                { merge : true}
-            );
-
-            setIsWishlisted(!isWishlisted);
-
+            if (isWishlisted(product.id)) {
+                await removeFromWishlist(product.id);
+            } else {
+                await addToWishlist(product.id);
+            }
         } catch (error) {
-            console.error(error.message);
-        }                  
-                
+            console.error(error);
+        }
     }
 
     useEffect(()=>{
@@ -56,19 +49,6 @@ function ProductDetails(){
 
         fetchProduct();
     },[id]);
-
-    useEffect(() => {
-        async function checkWishlist() {
-            if (!user) return;
-    
-            const snapshot = await getDoc(doc(db, "users", user.uid));
-            const wishlist = snapshot.data()?.wishlist || [];
-    
-            setIsWishlisted(wishlist.includes(id));
-        }
-    
-        checkWishlist();
-    }, [user, id]);
     
 
     if(!product){
@@ -98,10 +78,10 @@ function ProductDetails(){
                         </div>
     
                         <button
-                            className={`wishlist-btn ${isWishlisted ? "wishlisted" : ""}`}
+                            className={`wishlist-btn ${isWishlisted(product.id) ? "wishlisted" : ""}`}
                             onClick={handleWishlist}
                         >
-                            {isWishlisted ? "♥" : "♡"}
+                            {isWishlisted(product.id) ? "♥" : "♡"}
                         </button>
                     </div>
     
@@ -140,10 +120,10 @@ function ProductDetails(){
                     </div>
     
                     <button
-                        className={`main-wishlist-btn ${isWishlisted ? "remove" : ""}`}
+                        className={`main-wishlist-btn ${isWishlisted(product.id) ? "remove" : ""}`}
                         onClick={handleWishlist}
                     >
-                        {isWishlisted
+                        {isWishlisted(product.id)
                             ? "Remove from Wishlist"
                             : "Add to Wishlist"}
                     </button>

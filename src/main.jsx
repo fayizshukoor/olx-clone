@@ -4,11 +4,14 @@ import './index.css'
 import { RouterProvider } from 'react-router-dom';
 import router from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
+import { WishlistProvider } from './context/WishlistContext';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router}/>
-    </AuthProvider>
+    <WishlistProvider>
+        <RouterProvider router={router}/>
+    </WishlistProvider>
+</AuthProvider>
     
   </StrictMode>,
 )
