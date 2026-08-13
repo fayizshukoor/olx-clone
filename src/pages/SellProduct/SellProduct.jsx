@@ -4,6 +4,7 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../../services/firebase";
 import { useNavigate } from "react-router-dom";
 import './SellProduct.css';
+import { uploadImage } from "../../services/cloudinary";
 
 function SellProduct() {
 
@@ -12,8 +13,12 @@ function SellProduct() {
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+
 
     const { user } = useAuth();
 
@@ -48,45 +53,50 @@ function SellProduct() {
             return "Location is required";
         }
 
-        if (!imageUrl.trim()) {
-            return "Image URL is required";
-        }
-
-        try {
-            new URL(imageUrl);
-        } catch {
-            return "Please enter a valid image URL";
-        }
-
         return null;
     }
 
 
     async function handleSubmit(e) {
         e.preventDefault();
-
+    
         const validationError = validateForm();
+    
         if (validationError) {
             setError(validationError);
             return;
         }
+    
+        if (!image) {
+            setError("Product image is required");
+            return;
+        }
+    
         try {
-            await addDoc(collection(db, 'products'), {
-                title: title,
+            setError("");
+            setLoading(true);
+    
+            // Upload image to Cloudinary
+            const imageUrl = await uploadImage(image);
+    
+            // Save product to Firestore
+            await addDoc(collection(db, "products"), {
+                title: title.trim(),
                 price: Number(price),
-                description: description,
-                category: category,
-                location: location,
+                description: description.trim(),
+                category: category.trim(),
+                location: location.trim(),
                 imageUrl: imageUrl,
                 sellerId: user.uid,
                 sellerEmail: user.email,
                 createdAt: serverTimestamp()
             });
-
-            navigate('/');
-
+    
+            navigate("/");
         } catch (error) {
             setError(error.message);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -101,8 +111,34 @@ function SellProduct() {
                 <input type="text" placeholder="Description" onChange={(e) => setDescription(e.target.value)} value={description} />
                 <input type="text" placeholder="Category" onChange={(e) => setCategory(e.target.value)} value={category} />
                 <input type="text" placeholder="Location" onChange={(e) => setLocation(e.target.value)} value={location} />
-                <input type="text" placeholder="Image Url" onChange={(e) => setImageUrl(e.target.value)} value={imageUrl} />
-                <button type="submit">Post Now</button>
+                
+                <label htmlFor="product-image">Product Image</label>
+
+                <input
+                    id="product-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                        const file = e.target.files[0];
+
+                        if (file) {
+                            setImage(file);
+                            setImagePreview(URL.createObjectURL(file));
+                        }
+                    }}
+                />
+
+                {imagePreview && (
+                    <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="image-preview"
+                    />
+                )}
+
+                <button type="submit" disabled={loading}>
+                    {loading ? "Posting..." : "Post Now"}
+                </button>
             </form>
         </div>
     )

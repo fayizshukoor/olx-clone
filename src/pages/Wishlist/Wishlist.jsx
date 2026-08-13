@@ -65,22 +65,30 @@ function Wishlist() {
             <h1>My Wishlist</h1>
 
             <div className="products-grid">
-                {products ? products.map(product => (
-                    <div key={product.id} className="wishlist-item">
-                        <ProductCard product={product} />
-                        <button
-                            className="remove-btn"
-                            onClick={() => handleRemove(product.id)}
-                        >
-                            Remove
-                        </button>
+                {products.length > 0 ? (
+                    products.map(product => (
+                        <div key={product.id} className="wishlist-item">
+                            <ProductCard product={product} />
+
+                            <button
+                                className="remove-btn"
+                                onClick={() => handleRemove(product.id)}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <div className="empty-wishlist">
+                        <h2>Your Wishlist is Empty</h2>
+                        <p>
+                            Products you add to your wishlist will appear here.
+                        </p>
                     </div>
-                )) :
-                    <h1>No items in Wishlist</h1>
-                }
+                )}
             </div>
         </div>
-    )
+    );
 }
 
 export default Wishlist;
